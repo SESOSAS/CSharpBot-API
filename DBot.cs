@@ -9,15 +9,21 @@ namespace CSharpBot_API
     {
         static DiscordClient client = new DiscordClient(new DiscordConfiguration()
         {
-            Token = "Your-Token",
+            Token = "OTcwMDQzODQ2NDQ2NzEwODI2.Ym2Nuw.wZXUqmYvjxOWpuevkdmggdhJGNQ",
             TokenType = TokenType.Bot,
         });
 
+        /// <summary>
+        /// Client Prefix
+        /// </summary>
+        public static string prefix = "!";
 
 
-        public static async void DCClientStart()
+        /// <summary>
+        /// Start the client.
+        /// </summary>
+        public static async void ClientStart()
         {
-            string prefix = "!";
             client.MessageCreated += async (c, e) =>
             {
                 if (e.Message.Content.StartsWith(prefix))
@@ -44,22 +50,39 @@ namespace CSharpBot_API
             await Task.Delay(-1);
         }
 
-        public static async void DCClientStop()
+        /// <summary>
+        /// Stop the client.
+        /// </summary>
+        public static async void ClientStop()
         {
             await client.DisconnectAsync();
         }
 
-        public static async void SendMessage(string channel, string text)
+        /// <summary>
+        /// Send Message as Client.
+        /// </summary>
+        /// <param name="channel">Channel ID (Channel you want to send the message to).</param>
+        /// <param name="text">Message you want to send.</param>
+        public static async void ClientSendMessage(string channel, string text)
         {
             await client.SendMessageAsync(await client.GetChannelAsync(ulong.Parse(channel)), text);
         }
 
-        public static async void Update()
+        /// <summary>
+        /// Update client.
+        /// </summary>
+        public static async void ClientUpdate()
         {
             await client.UpdateCurrentUserAsync();
         }
 
-        public static async void ChangeRPC(int rpcMode, string text, string url)
+        /// <summary>
+        /// Change client rpc
+        /// </summary>
+        /// <param name="rpcMode">RPC mode by int [0 = Playing | 1 = Streaming | 2 = ListeningTo | 3 = Watching | 4 = Watching | 5 = Competing]</param>
+        /// <param name="text">RPC Text</param>
+        /// <param name="url">RPC StreamURL</param>
+        public static async void ClientChangeRPC(int rpcMode, string text, string url)
         {
             DiscordActivity activity = new DiscordActivity();
 
