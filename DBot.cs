@@ -2,6 +2,8 @@
 using System;
 using DSharpPlus.Entities;
 using System.Threading.Tasks;
+using System.IO;
+using System.Collections.Generic;
 
 namespace CSharpBot_API
 {
@@ -9,14 +11,29 @@ namespace CSharpBot_API
     {
         static DiscordClient client = new DiscordClient(new DiscordConfiguration()
         {
-            Token = "OTcwMDQzODQ2NDQ2NzEwODI2.Ym2Nuw.wZXUqmYvjxOWpuevkdmggdhJGNQ",
+            Token = "Your-Token",
             TokenType = TokenType.Bot,
         });
+
+        /// <summary>
+        /// All Guilds
+        /// </summary>
+        public static DiscordGuild[] ArrayGuilds { get; set; }
+
+        /// <summary>
+        /// All Channels
+        /// </summary>
+        public static DiscordChannel[] ArrayChannels { get; set; }
 
         /// <summary>
         /// Client Prefix
         /// </summary>
         public static string prefix = "!";
+
+        /// <summary>
+        /// Client Online?!
+        /// </summary>
+        public static bool IsOnline { get; private set; }
 
 
         /// <summary>
@@ -41,13 +58,21 @@ namespace CSharpBot_API
                     }
                 }
             };
+
             client.Ready += async (c, e) => {
 
-                await c.UpdateStatusAsync();
+                IsOnline = true;
+
+                ArrayGuilds = new List<DiscordGuild>(client.Guilds.Values).ToArray();
             };
 
             await client.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        static void Timer_Tick()
+        {
+
         }
 
         /// <summary>
@@ -56,6 +81,7 @@ namespace CSharpBot_API
         public static async void ClientStop()
         {
             await client.DisconnectAsync();
+            IsOnline = false;
         }
 
         /// <summary>
@@ -65,7 +91,10 @@ namespace CSharpBot_API
         /// <param name="text">Message you want to send.</param>
         public static async void ClientSendMessage(string channel, string text)
         {
-            await client.SendMessageAsync(await client.GetChannelAsync(ulong.Parse(channel)), text);
+            if(client.GetChannelAsync(ulong.Parse(channel)).Result.Type == ChannelType.Text)
+            {
+                await client.SendMessageAsync(await client.GetChannelAsync(ulong.Parse(channel)), text);
+            }
         }
 
         /// <summary>
@@ -78,7 +107,7 @@ namespace CSharpBot_API
 
         /// <summary>
         /// Change client rpc
-        /// </summary>
+        /// </summary>4
         /// <param name="rpcMode">RPC mode by int [0 = Playing | 1 = Streaming | 2 = ListeningTo | 3 = Watching | 4 = Watching | 5 = Competing]</param>
         /// <param name="text">RPC Text</param>
         /// <param name="url">RPC StreamURL</param>
@@ -107,12 +136,33 @@ namespace CSharpBot_API
                 case 5:
                     activityType = ActivityType.Competing;
                     break;
+                default:
+                    break;
             }
 
             activity.Name = text;
             activity.ActivityType = activityType;
-            activity.StreamUrl = url;
-            await client.UpdateStatusAsync(activity);
+            if(url != String.Empty && url.Contains("https://")) activity.StreamUrl = url;
+            await client.UpdateStatusAsync(activity, UserStatus.Online);
+        }
+
+        /// <summary>
+        /// Channel Name that will be fetched by DBot.ChannelName("ChannelID")
+        /// </summary>
+        public static string FetchedChannelName { get; private set; }
+
+        /// <summary>
+        /// Fetch channel name by id
+        /// </summary>
+        /// <param name="text">Channel id as string</param>
+        public static async void ChannelName(string text)
+        {
+            if (text == null)
+                return;
+            if (text == String.Empty)
+                return;
+            FetchedChannelName = client.GetChannelAsync(ulong.Parse(text)).Result.Name; 
+
         }
     }
 }
