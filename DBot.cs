@@ -9,7 +9,7 @@ namespace CSharpBot_API
     {
         static DiscordClient client = new DiscordClient(new DiscordConfiguration()
         {
-            Token = "OTcwMDQzODQ2NDQ2NzEwODI2.Ym2Nuw.wZXUqmYvjxOWpuevkdmggdhJGNQ",
+            Token = "Your-Token",
             TokenType = TokenType.Bot,
         });
 
