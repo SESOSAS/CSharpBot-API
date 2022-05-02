@@ -32,6 +32,11 @@ namespace CSharpBot_API
         public static string prefix = "!";
 
         /// <summary>
+        /// Verification Role
+        /// </summary>
+        public static string VerificationRoleID = "1234";
+
+        /// <summary>
         /// Client Online?!
         /// </summary>
         public static bool IsOnline { get; private set; }
