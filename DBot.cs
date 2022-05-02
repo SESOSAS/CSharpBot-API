@@ -4,6 +4,7 @@ using DSharpPlus.Entities;
 using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace CSharpBot_API
 {
@@ -45,17 +46,12 @@ namespace CSharpBot_API
             {
                 if (e.Message.Content.StartsWith(prefix))
                 {
-                    string[] ags = e.Message.Content.Split(' ');
-                    string command = ags[0].Replace(prefix, "");
-
-                    switch (command)
-                    {
-                        case "help":
-                            await e.Channel.SendMessageAsync("No help!");
-                            break;
-                        default:
-                            break;
-                    }
+                    
+                    string[] args = e.Message.Content.Split(' ');
+                    string command = args[0].Replace(prefix, "");
+                    Type type = typeof(Commands);
+                    MethodInfo info = type.GetMethod(command);
+                    info.Invoke(null, new object[] { e, args });
                 }
             };
 
